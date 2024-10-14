@@ -161,12 +161,18 @@ class CORE_EXPORT QgsStyle : public QObject
     Q_OBJECT
 
   public:
-
     /**
      * Constructor for QgsStyle.
      */
     QgsStyle();
+
+public:
     ~QgsStyle() override;
+
+    // static QgsStyle* GetInstance() {
+    //     static QgsStyle* instance = new QgsStyle();
+    //     return instance;
+    // }
 
     /**
      * Enum for Entities involved in a style
@@ -1059,8 +1065,11 @@ class CORE_EXPORT QgsStyle : public QObject
      */
     void labelSettingsChanged( const QString &name );
 
-  private:
+public:
+   static QgsIdSymbolMap GetSymbolFromDb();
+   static QgsIdSymbolMap mIdSymbols;
 
+private:
     QgsSymbolMap mSymbols;
     QgsVectorColorRampMap mColorRamps;
     QgsTextFormatMap mTextFormats;

@@ -45,7 +45,7 @@ class CORE_EXPORT Qgs25DRenderer : public QgsFeatureRenderer
     QSet<QString> usedAttributes( const QgsRenderContext &context ) const override;
     QgsFeatureRenderer *clone() const override SIP_FACTORY;
 
-    QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
+    QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
     QgsSymbolList symbols( QgsRenderContext &context ) const override;
     bool accept( QgsStyleEntityVisitorInterface *visitor ) const override;
 

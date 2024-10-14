@@ -1020,9 +1020,9 @@ if (WITH_CORE)
   add_subdirectory(resources)
   add_subdirectory(i18n)
 
-  if (WITH_BINDINGS)
-    add_subdirectory(python)
-  endif()
+  # if (WITH_BINDINGS)
+  #   add_subdirectory(python)
+  # endif()
 
   if (APPLE)
     # must be last for install, so install_name_tool can do its work

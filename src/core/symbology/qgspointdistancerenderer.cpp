@@ -252,8 +252,7 @@ QgsSymbolList QgsPointDistanceRenderer::symbols( QgsRenderContext &context ) con
   return mRenderer->symbols( context );
 }
 
-QgsSymbol *QgsPointDistanceRenderer::symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
-{
+QgsSymbol *QgsPointDistanceRenderer::symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) {
   if ( !mRenderer )
   {
     return nullptr;
@@ -261,15 +260,14 @@ QgsSymbol *QgsPointDistanceRenderer::symbolForFeature( const QgsFeature &feature
   return mRenderer->symbolForFeature( feature, context );
 }
 
-QgsSymbol *QgsPointDistanceRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+QgsSymbol *QgsPointDistanceRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   if ( !mRenderer )
     return nullptr;
   return mRenderer->originalSymbolForFeature( feature, context );
 }
 
-QgsSymbolList QgsPointDistanceRenderer::symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
-{
+QgsSymbolList QgsPointDistanceRenderer::symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) {
   if ( !mRenderer )
   {
     return QgsSymbolList();
@@ -277,7 +275,7 @@ QgsSymbolList QgsPointDistanceRenderer::symbolsForFeature( const QgsFeature &fea
   return mRenderer->symbolsForFeature( feature, context );
 }
 
-QgsSymbolList QgsPointDistanceRenderer::originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+QgsSymbolList QgsPointDistanceRenderer::originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   if ( !mRenderer )
     return QgsSymbolList();
@@ -291,8 +289,7 @@ QSet< QString > QgsPointDistanceRenderer::legendKeysForFeature( const QgsFeature
   return mRenderer->legendKeysForFeature( feature, context );
 }
 
-bool QgsPointDistanceRenderer::willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) const
-{
+bool QgsPointDistanceRenderer::willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) {
   if ( !mRenderer )
   {
     return false;

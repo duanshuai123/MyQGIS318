@@ -494,7 +494,7 @@ class CORE_EXPORT QgsRuleBasedRenderer : public QgsFeatureRenderer
     ~QgsRuleBasedRenderer() override;
 
     //! Returns symbol for current feature. Should not be used individually: there could be more symbols for a feature
-    QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
+    QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
 
     bool renderFeature( const QgsFeature &feature, QgsRenderContext &context, int layer = -1, bool selected = false, bool drawVertexMarker = false ) override SIP_THROW( QgsCsException );
 
@@ -524,9 +524,9 @@ class CORE_EXPORT QgsRuleBasedRenderer : public QgsFeatureRenderer
     void setLegendSymbolItem( const QString &key, QgsSymbol *symbol SIP_TRANSFER ) override;
     QgsLegendSymbolList legendSymbolItems() const override;
     QString dump() const override;
-    bool willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
-    QgsSymbolList symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
-    QgsSymbolList originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
+    bool willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
+    QgsSymbolList symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
+    QgsSymbolList originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
     QSet<QString> legendKeysForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
     QgsFeatureRenderer::Capabilities capabilities() override { return MoreSymbolsPerFeature | Filter | ScaleDependent; }
     bool accept( QgsStyleEntityVisitorInterface *visitor ) const override;

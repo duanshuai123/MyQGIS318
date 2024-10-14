@@ -89,12 +89,12 @@ class CORE_EXPORT QgsPointDistanceRenderer: public QgsFeatureRenderer
     bool filterNeedsGeometry() const override;
     QgsFeatureRenderer::Capabilities capabilities() override;
     QgsSymbolList symbols( QgsRenderContext &context ) const override;
-    QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
-    QgsSymbol *originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
-    QgsSymbolList symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
-    QgsSymbolList originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
+    QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
+    QgsSymbol *originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
+    QgsSymbolList symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
+    QgsSymbolList originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
     QSet< QString > legendKeysForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
-    bool willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
+    bool willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
     void startRender( QgsRenderContext &context, const QgsFields &fields ) override;
     void stopRender( QgsRenderContext &context ) override;
     QgsLegendSymbolList legendSymbolItems() const override;

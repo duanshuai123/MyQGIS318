@@ -70,6 +70,7 @@ enum Symbol3DTable
 
 
 QgsStyle *QgsStyle::sDefaultStyle = nullptr;
+QgsIdSymbolMap QgsStyle::mIdSymbols = {};
 
 QgsStyle::QgsStyle()
 {
@@ -195,10 +196,35 @@ bool QgsStyle::addSymbol( const QString &name, QgsSymbol *symbol, bool update )
     if ( update )
       saveSymbol( name, symbol, false, QStringList() );
   }
-
   return true;
 }
 
+// @duanshuai 
+QgsIdSymbolMap QgsStyle::GetSymbolFromDb() {
+  if (mIdSymbols.size() == 0 ) {
+    sqlite3_database_unique_ptr current_db;
+    current_db.open(QgsApplication::userStylePath());
+    QString query = qgs_sqlite3_mprintf("SELECT id,xml,hash_key FROM symbol;");
+    sqlite3_statement_unique_ptr statement;
+    int rc;
+    statement = current_db.prepare( query, rc );
+    while ( rc == SQLITE_OK && sqlite3_step( statement.get() ) == SQLITE_ROW )
+    {
+      const QString id = statement.columnAsText(0);
+      const QString symbol_xml = statement.columnAsText(1);
+      QDomDocument doc;
+      doc.setContent(symbol_xml);
+      QDomElement symbol_dom = doc.documentElement();
+      QgsSymbol *symbol = QgsSymbolLayerUtils::loadSymbol( symbol_dom, QgsReadWriteContext() );
+      mIdSymbols.insert(id.toInt(), symbol);
+    }
+    QgsDebugMsg( "mIdSymbols size: " + QString::number(mIdSymbols.size()) );
+  }
+  return mIdSymbols;
+}
+
+// @duanshuai fill hash_key value
+#include <functional>
 bool QgsStyle::saveSymbol( const QString &name, QgsSymbol *symbol, bool favorite, const QStringList &tags )
 {
   // TODO add support for groups
@@ -214,9 +240,13 @@ bool QgsStyle::saveSymbol( const QString &name, QgsSymbol *symbol, bool favorite
   QTextStream stream( &xmlArray );
   stream.setCodec( "UTF-8" );
   symEl.save( stream, 4 );
-  QString query = qgs_sqlite3_mprintf( "INSERT INTO symbol VALUES (NULL, '%q', '%q', %d);",
-                                       name.toUtf8().constData(), xmlArray.constData(), ( favorite ? 1 : 0 ) );
 
+  std::hash<std::string> str_hash;
+  std::string data = xmlArray.constData();
+  size_t hash_key = str_hash( data );
+  std::cerr << hash_key << " " << std::endl;
+  QString query = qgs_sqlite3_mprintf( "INSERT INTO symbol VALUES (NULL, '%q', '%q', %d, %d);",
+                                       name.toUtf8().constData(), xmlArray.constData(), ( favorite ? 1 : 0 ) , hash_key);
   if ( !runEmptyQuery( query ) )
   {
     QgsDebugMsg( QStringLiteral( "Couldn't insert symbol into the database!" ) );
@@ -520,13 +550,15 @@ bool QgsStyle::createMemoryDatabase()
   return true;
 }
 
+//@duanshuai add hash_key
 void QgsStyle::createTables()
 {
   QString query = qgs_sqlite3_mprintf( "CREATE TABLE symbol("\
                                        "id INTEGER PRIMARY KEY,"\
                                        "name TEXT UNIQUE,"\
                                        "xml TEXT,"\
-                                       "favorite INTEGER);"\
+                                       "favorite INTEGER,"\
+                                       "hash_key INTEGER);"\
                                        "CREATE TABLE colorramp("\
                                        "id INTEGER PRIMARY KEY,"\
                                        "name TEXT UNIQUE,"\

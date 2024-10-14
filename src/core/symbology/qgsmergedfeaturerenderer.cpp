@@ -464,8 +464,7 @@ QDomElement QgsMergedFeatureRenderer::save( QDomDocument &doc, const QgsReadWrit
   return rendererElem;
 }
 
-QgsSymbol *QgsMergedFeatureRenderer::symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
-{
+QgsSymbol *QgsMergedFeatureRenderer::symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) {
   if ( !mSubRenderer )
   {
     return nullptr;
@@ -473,14 +472,13 @@ QgsSymbol *QgsMergedFeatureRenderer::symbolForFeature( const QgsFeature &feature
   return mSubRenderer->symbolForFeature( feature, context );
 }
 
-QgsSymbol *QgsMergedFeatureRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
-{
+QgsSymbol *QgsMergedFeatureRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) {
   if ( !mSubRenderer )
     return nullptr;
   return mSubRenderer->originalSymbolForFeature( feature, context );
 }
 
-QgsSymbolList QgsMergedFeatureRenderer::symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+QgsSymbolList QgsMergedFeatureRenderer::symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   if ( !mSubRenderer )
   {
@@ -489,7 +487,7 @@ QgsSymbolList QgsMergedFeatureRenderer::symbolsForFeature( const QgsFeature &fea
   return mSubRenderer->symbolsForFeature( feature, context );
 }
 
-QgsSymbolList QgsMergedFeatureRenderer::originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+QgsSymbolList QgsMergedFeatureRenderer::originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   if ( !mSubRenderer )
     return QgsSymbolList();
@@ -544,7 +542,7 @@ QgsLegendSymbolList QgsMergedFeatureRenderer::legendSymbolItems() const
   return mSubRenderer->legendSymbolItems();
 }
 
-bool QgsMergedFeatureRenderer::willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+bool QgsMergedFeatureRenderer::willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   if ( !mSubRenderer )
   {

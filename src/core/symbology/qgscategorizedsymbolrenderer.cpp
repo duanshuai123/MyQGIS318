@@ -239,7 +239,7 @@ QgsSymbol *QgsCategorizedSymbolRenderer::symbolForValue( const QVariant &value, 
   return *it;
 }
 
-QgsSymbol *QgsCategorizedSymbolRenderer::symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+QgsSymbol *QgsCategorizedSymbolRenderer::symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   return originalSymbolForFeature( feature, context );
 }
@@ -262,7 +262,7 @@ QVariant QgsCategorizedSymbolRenderer::valueForFeature( const QgsFeature &featur
   return value;
 }
 
-QgsSymbol *QgsCategorizedSymbolRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+QgsSymbol *QgsCategorizedSymbolRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   QVariant value = valueForFeature( feature, context );
 

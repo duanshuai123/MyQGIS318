@@ -25,13 +25,11 @@ QgsNullSymbolRenderer::QgsNullSymbolRenderer()
 {
 }
 
-QgsSymbol *QgsNullSymbolRenderer::symbolForFeature( const QgsFeature &, QgsRenderContext & ) const
-{
+QgsSymbol *QgsNullSymbolRenderer::symbolForFeature( const QgsFeature &, QgsRenderContext & ) {
   return nullptr;
 }
 
-QgsSymbol *QgsNullSymbolRenderer::originalSymbolForFeature( const QgsFeature &, QgsRenderContext & ) const
-{
+QgsSymbol *QgsNullSymbolRenderer::originalSymbolForFeature( const QgsFeature &, QgsRenderContext & ) {
   return nullptr;
 }
 
@@ -70,7 +68,7 @@ void QgsNullSymbolRenderer::stopRender( QgsRenderContext &context )
   }
 }
 
-bool QgsNullSymbolRenderer::willRenderFeature( const QgsFeature &, QgsRenderContext & ) const
+bool QgsNullSymbolRenderer::willRenderFeature( const QgsFeature &, QgsRenderContext & ) 
 {
   //return true for every feature - so they are still selectable
   return true;

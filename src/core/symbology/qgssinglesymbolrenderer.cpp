@@ -43,28 +43,133 @@ QgsSingleSymbolRenderer::QgsSingleSymbolRenderer( QgsSymbol *symbol )
 
 QgsSingleSymbolRenderer::~QgsSingleSymbolRenderer() = default;
 
-QgsSymbol *QgsSingleSymbolRenderer::symbolForFeature( const QgsFeature &, QgsRenderContext & ) const
-{
-  return mSymbol.get();
+// @duanshuai
+QgsSymbol *QgsSingleSymbolRenderer::symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) {
+  // Q_UNUSED( context )
+  QgsFields fields = feature.fields();
+  static QString symbox_id_name = "symbol_id";
+  static QString symbox_xml_name = "symbol_xml";
+  int index1 = fields.indexFromName(symbox_id_name);
+  int index2 = fields.indexFromName(symbox_xml_name);
+  bool create_symbol = false;
+  if (index1 >=0 ) {
+    int symbol_id = feature.attribute(index1).toInt();
+    std::cerr << "symbol id:" << symbol_id << std::endl;
+    QgsIdSymbolMap id_map = QgsStyle::GetSymbolFromDb();
+    if (id_map.contains(symbol_id)) {
+      QgsSymbol* symbol = id_map[symbol_id];
+      create_symbol = true;
+      if (!mUsedSymbols.contains(symbol)) {
+        mUsedSymbols.insert(symbol);
+        if (mFields.isEmpty()){
+          symbol->startRender( context, fields );
+        } else {
+          symbol->startRender( context, mFields );
+        }
+      }
+      current_symbol = symbol;
+      return current_symbol;
+    }
+  }
+
+  if (!create_symbol) {
+    if (index2 > 0) {
+      QString symbol_xml = feature.attribute(symbox_xml_name).toString();
+      QDomDocument doc;
+      doc.setContent(symbol_xml);
+      QDomElement symbol_dom = doc.documentElement();
+      QgsSymbol* symbol = QgsSymbolLayerUtils::loadSymbol( symbol_dom, QgsReadWriteContext() );
+      if (mFields.isEmpty()){
+        symbol->startRender( context, fields );
+      } else {
+        symbol->startRender( context, mFields );
+      }
+      mUsedSymbols.insert(symbol);
+      current_symbol = symbol;
+      return current_symbol;
+    }
+  }
+  current_symbol = mSymbol.get();
+  return current_symbol;
 }
 
-QgsSymbol *QgsSingleSymbolRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+
+// @duanshuai
+QgsSymbol *QgsSingleSymbolRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context )
 {
-  Q_UNUSED( context )
-  Q_UNUSED( feature )
-  return mSymbol.get();
+  // Q_UNUSED( context )
+  // Q_UNUSED( feature )
+  QgsFields fields = feature.fields();
+  static QString symbox_id_name = "symbol_id";
+  static QString symbox_xml_name = "symbol_xml";
+  int index1 = fields.indexFromName(symbox_id_name);
+  int index2 = fields.indexFromName(symbox_xml_name);
+  bool create_symbol = false;
+  if (index1 >=0 ) {
+    int symbol_id = feature.attribute(index1).toInt();
+    std::cerr << "symbol id:" << symbol_id << std::endl;
+    QgsIdSymbolMap id_map = QgsStyle::GetSymbolFromDb();
+    if (id_map.contains(symbol_id)) {
+      QgsSymbol* symbol = id_map[symbol_id];
+      create_symbol = true;
+      if (!mUsedSymbols.contains(symbol)) {
+        mUsedSymbols.insert(symbol);
+        if (mFields.isEmpty()){
+          symbol->startRender( context, fields );
+        } else {
+          symbol->startRender( context, mFields );
+        }
+      }
+      current_symbol = symbol;
+      return current_symbol;
+    }
+  }
+
+  if (!create_symbol) {
+    if (index2 > 0) {
+      QString symbol_xml = feature.attribute(symbox_xml_name).toString();
+      QDomDocument doc;
+      doc.setContent(symbol_xml);
+      QDomElement symbol_dom = doc.documentElement();
+      QgsSymbol* symbol = QgsSymbolLayerUtils::loadSymbol( symbol_dom, QgsReadWriteContext() );
+      if (mFields.isEmpty()){
+        symbol->startRender( context, fields );
+      } else {
+        symbol->startRender( context, mFields );
+      }
+      mUsedSymbols.insert(symbol);
+      current_symbol = symbol;
+      return current_symbol;
+    }
+  }
+  current_symbol = mSymbol.get();
+  return current_symbol;
 }
 
+// @duanshuai
 void QgsSingleSymbolRenderer::startRender( QgsRenderContext &context, const QgsFields &fields )
 {
   QgsFeatureRenderer::startRender( context, fields );
+  std::cerr << "QgsSingleSymbolRenderer::startRender" << std::endl;
 
   if ( !mSymbol )
     return;
+  if (mFields.isEmpty()) {
+    mFields = fields;
+  }
+  if (mUsedSymbols.isEmpty()) {
+    mSymbol->startRender( context, fields );
+  } else {
+    for (QgsSymbol* symbol : mUsedSymbols) {
+      symbol->startRender( context, fields );
+    }
+  }
 
-  mSymbol->startRender( context, fields );
+  //mSymbol->startRender( context, fields );
 }
 
+
+// @duanshuai
 void QgsSingleSymbolRenderer::stopRender( QgsRenderContext &context )
 {
   QgsFeatureRenderer::stopRender( context );
@@ -72,7 +177,15 @@ void QgsSingleSymbolRenderer::stopRender( QgsRenderContext &context )
   if ( !mSymbol )
     return;
 
-  mSymbol->stopRender( context );
+  if (mUsedSymbols.isEmpty()) {
+    mSymbol->stopRender( context);
+  } else {
+    for (QgsSymbol* symbol : mUsedSymbols) {
+      symbol->stopRender( context);
+    }
+  }
+
+  //mSymbol->stopRender( context );
 }
 
 QSet<QString> QgsSingleSymbolRenderer::usedAttributes( const QgsRenderContext &context ) const

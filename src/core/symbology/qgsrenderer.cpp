@@ -79,8 +79,7 @@ QgsFeatureRenderer *QgsFeatureRenderer::defaultRenderer( QgsWkbTypes::GeometryTy
   return new QgsSingleSymbolRenderer( QgsSymbol::defaultSymbol( geomType ) );
 }
 
-QgsSymbol *QgsFeatureRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
-{
+QgsSymbol *QgsFeatureRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) {
   return symbolForFeature( feature, context );
 }
 
@@ -362,7 +361,7 @@ void QgsFeatureRenderer::setVertexMarkerAppearance( int type, double size )
   mCurrentVertexMarkerSize = size;
 }
 
-bool QgsFeatureRenderer::willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+bool QgsFeatureRenderer::willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   return nullptr != symbolForFeature( feature, context );
 }
@@ -400,7 +399,7 @@ void QgsFeatureRenderer::renderVertexMarkerPolygon( QPolygonF &pts, QList<QPolyg
   }
 }
 
-QgsSymbolList QgsFeatureRenderer::symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+QgsSymbolList QgsFeatureRenderer::symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   QgsSymbolList lst;
   QgsSymbol *s = symbolForFeature( feature, context );
@@ -414,8 +413,7 @@ void QgsFeatureRenderer::modifyRequestExtent( QgsRectangle &extent, QgsRenderCon
   Q_UNUSED( context )
 }
 
-QgsSymbolList QgsFeatureRenderer::originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
-{
+QgsSymbolList QgsFeatureRenderer::originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) {
   QgsSymbolList lst;
   QgsSymbol *s = originalSymbolForFeature( feature, context );
   if ( s ) lst.append( s );

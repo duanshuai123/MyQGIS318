@@ -39,8 +39,8 @@ class CORE_EXPORT QgsSingleSymbolRenderer : public QgsFeatureRenderer
     QgsSingleSymbolRenderer( QgsSymbol *symbol SIP_TRANSFER );
     ~QgsSingleSymbolRenderer() override;
 
-    QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
-    QgsSymbol *originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
+    QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
+    QgsSymbol *originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
     void startRender( QgsRenderContext &context, const QgsFields &fields ) override;
     void stopRender( QgsRenderContext &context ) override;
     QSet<QString> usedAttributes( const QgsRenderContext &context ) const override;
@@ -118,6 +118,9 @@ class CORE_EXPORT QgsSingleSymbolRenderer : public QgsFeatureRenderer
   protected:
     std::unique_ptr<QgsSymbol> mSymbol;
     std::unique_ptr<QgsDataDefinedSizeLegend> mDataDefinedSizeLegend;
+    QSet<QgsSymbol*> mUsedSymbols;
+    QgsSymbol* current_symbol = nullptr;
+    QgsFields mFields;
 
   private:
 #ifdef SIP_RUN

@@ -124,7 +124,7 @@ QString QgsGraduatedSymbolRenderer::legendKeyForValue( double value ) const
   return QString();
 }
 
-QgsSymbol *QgsGraduatedSymbolRenderer::symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+QgsSymbol *QgsGraduatedSymbolRenderer::symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   return originalSymbolForFeature( feature, context );
 }
@@ -145,7 +145,7 @@ QVariant QgsGraduatedSymbolRenderer::valueForFeature( const QgsFeature &feature,
   return value;
 }
 
-QgsSymbol *QgsGraduatedSymbolRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+QgsSymbol *QgsGraduatedSymbolRenderer::originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   QVariant value = valueForFeature( feature, context );
 

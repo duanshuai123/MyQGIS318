@@ -154,6 +154,9 @@ QgsVectorLayerRenderer::QgsVectorLayerRenderer( QgsVectorLayer *layer, QgsRender
       mAttrNames.unite( handler->usedAttributes( layer, context ) );
   }
 
+  // @duanshuai add field name to mAttrNames
+  mAttrNames.insert( QStringLiteral( "symbol_id" ) );
+  mAttrNames.insert( QStringLiteral( "symbol_xml" ) );
   //register label and diagram layer to the labeling engine
   prepareLabeling( layer, mAttrNames );
   prepareDiagrams( layer, mAttrNames );

@@ -149,7 +149,7 @@ class CORE_EXPORT QgsFeatureRenderer
      * \returns returns pointer to symbol or 0 if symbol was not found
      * \since QGIS 2.12
      */
-    virtual QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const = 0;
+    virtual QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) = 0;
 
     /**
      * Returns symbol for feature. The difference compared to symbolForFeature() is that it returns original
@@ -157,7 +157,7 @@ class CORE_EXPORT QgsFeatureRenderer
      * of a symbol for use in rendering.
      * \since QGIS 2.12
      */
-    virtual QgsSymbol *originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const;
+    virtual QgsSymbol *originalSymbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) ;
 
     /**
      * Returns legend keys matching a specified feature.
@@ -362,7 +362,7 @@ class CORE_EXPORT QgsFeatureRenderer
      * Default implementation uses symbolForFeature().
      * \since QGIS 2.12
      */
-    virtual bool willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) const;
+    virtual bool willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) ;
 
     /**
      * Returns list of symbols used for rendering the feature.
@@ -370,14 +370,14 @@ class CORE_EXPORT QgsFeatureRenderer
      * to use symbolForFeature()
      * \since QGIS 2.12
      */
-    virtual QgsSymbolList symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const;
+    virtual QgsSymbolList symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) ;
 
     /**
      * Equivalent of originalSymbolsForFeature() call
      * extended to support renderers that may use more symbols per feature - similar to symbolsForFeature()
      * \since QGIS 2.12
      */
-    virtual QgsSymbolList originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const;
+    virtual QgsSymbolList originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) ;
 
     /**
      * Allows for a renderer to modify the extent of a feature request prior to rendering

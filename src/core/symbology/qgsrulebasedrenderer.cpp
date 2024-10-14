@@ -931,7 +931,7 @@ QgsRuleBasedRenderer::~QgsRuleBasedRenderer()
 }
 
 
-QgsSymbol *QgsRuleBasedRenderer::symbolForFeature( const QgsFeature &, QgsRenderContext & ) const
+QgsSymbol *QgsRuleBasedRenderer::symbolForFeature( const QgsFeature &, QgsRenderContext & ) 
 {
   // not used at all
   return nullptr;
@@ -1283,17 +1283,17 @@ QString QgsRuleBasedRenderer::dump() const
   return msg;
 }
 
-bool QgsRuleBasedRenderer::willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+bool QgsRuleBasedRenderer::willRenderFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   return mRootRule->willRenderFeature( feature, &context );
 }
 
-QgsSymbolList QgsRuleBasedRenderer::symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+QgsSymbolList QgsRuleBasedRenderer::symbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   return mRootRule->symbolsForFeature( feature, &context );
 }
 
-QgsSymbolList QgsRuleBasedRenderer::originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) const
+QgsSymbolList QgsRuleBasedRenderer::originalSymbolsForFeature( const QgsFeature &feature, QgsRenderContext &context ) 
 {
   return mRootRule->symbolsForFeature( feature, &context );
 }

@@ -32,7 +32,7 @@ class QgsGrassEditRenderer : public QgsFeatureRenderer
 
     ~QgsGrassEditRenderer() override;
 
-    QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) const override;
+    QgsSymbol *symbolForFeature( const QgsFeature &feature, QgsRenderContext &context ) override;
 
     void startRender( QgsRenderContext &context, const QgsFields &fields ) override;
 

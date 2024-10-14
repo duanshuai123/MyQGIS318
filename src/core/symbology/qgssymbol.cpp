@@ -928,7 +928,9 @@ void QgsSymbol::renderFeature( const QgsFeature &feature, QgsRenderContext &cont
       clippingEnabled = false;
     }
   }
-
+  // @duanshuai
+  int count = geom.constGet()->partCount();
+  std::cerr << "geo part count: " << count << std::endl;
   mSymbolRenderContext->setGeometryPartCount( geom.constGet()->partCount() );
   mSymbolRenderContext->setGeometryPartNum( 1 );
 

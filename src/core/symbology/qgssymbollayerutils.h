@@ -38,6 +38,7 @@ class QgsSymbolLayer;
 
 typedef QMap<QString, QString> QgsStringMap;
 typedef QMap<QString, QgsSymbol * > QgsSymbolMap;
+typedef QMap<int, QgsSymbol * > QgsIdSymbolMap; // @duanshuai
 typedef QList< QPair< QColor, QString > > QgsNamedColorList SIP_SKIP;
 
 class QDomDocument;
