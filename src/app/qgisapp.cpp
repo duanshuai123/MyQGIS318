@@ -476,6 +476,7 @@ Q_GUI_EXPORT extern int qt_defaultDpiX();
 #include "qgsmaptooloffsetpointsymbol.h"
 #include "qgsmaptoolpan.h"
 #include "qgsmaptoolselect.h"
+#include "qgsmaptoolsymboledit.h"
 #include "qgsmaptoolsvgannotation.h"
 #include "qgsmaptoolreshape.h"
 #include "qgsmaptoolrotatepointsymbols.h"
@@ -1816,6 +1817,7 @@ QgisApp::~QgisApp()
   delete mMapTools.mSelectPolygon;
   delete mMapTools.mSelectRadius;
   delete mMapTools.mSelectFeatures;
+  delete mMapTools.mSybmolEdit; // @duanshuai
   delete mMapTools.mShowHideLabels;
   delete mMapTools.mSimplifyFeature;
   delete mMapTools.mSplitFeatures;
@@ -2717,6 +2719,7 @@ void QgisApp::createActions()
   connect( mActionPanToSelected, &QAction::triggered, this, &QgisApp::panToSelected );
   connect( mActionZoomIn, &QAction::triggered, this, &QgisApp::zoomIn );
   connect( mActionZoomOut, &QAction::triggered, this, &QgisApp::zoomOut );
+  connect( mActionSybmolEdit, &QAction::triggered, this, &QgisApp::symbolEdit );
   connect( mActionSelectFeatures, &QAction::triggered, this, &QgisApp::selectFeatures );
   connect( mActionSelectPolygon, &QAction::triggered, this, &QgisApp::selectByPolygon );
   connect( mActionSelectFreehand, &QAction::triggered, this, &QgisApp::selectByFreehand );
@@ -4401,6 +4404,12 @@ void QgisApp::createCanvasTools()
   mMapTools.mSelectFeatures->setAction( mActionSelectFeatures );
   mMapTools.mSelectFeatures->setSelectionMode( QgsMapToolSelectionHandler::SelectSimple );
   connect( mMapTools.mSelectFeatures, &QgsMapToolSelect::modeChanged, this, &QgisApp::selectionModeChanged );
+  // @duanshuai
+  mMapTools.mSybmolEdit = new QgsMapToolSymbolEdit( mMapCanvas );
+  mMapTools.mSybmolEdit->setAction( mActionSybmolEdit );
+  mMapTools.mSybmolEdit->setSelectionMode(QgsMapToolSelectionHandler::SelectSimple);
+  connect( mMapTools.mSybmolEdit, &QgsMapToolSelect::modeChanged, this, &QgisApp::selectionModeChanged );
+
   mMapTools.mSelectPolygon = new QgsMapToolSelect( mMapCanvas );
   mMapTools.mSelectPolygon->setAction( mActionSelectPolygon );
   mMapTools.mSelectPolygon->setSelectionMode( QgsMapToolSelectionHandler::SelectPolygon );
@@ -10320,6 +10329,11 @@ void QgisApp::selectFeatures()
   mMapCanvas->setMapTool( mMapTools.mSelectFeatures );
 }
 
+void QgisApp::symbolEdit()
+{
+  mMapCanvas->setMapTool( mMapTools.mSybmolEdit );
+}
+
 void QgisApp::selectByPolygon()
 {
   mMapCanvas->setMapTool( mMapTools.mSelectPolygon );
@@ -14688,6 +14702,7 @@ void QgisApp::activateDeactivateLayerRelatedActions( QgsMapLayer *layer )
   {
     mMenuSelect->setEnabled( false );
     mActionSelectFeatures->setEnabled( false );
+    mActionSybmolEdit->setEnabled( false ); //duanshuai
     mActionSelectPolygon->setEnabled( false );
     mActionSelectFreehand->setEnabled( false );
     mActionSelectRadius->setEnabled( false );
@@ -14839,6 +14854,7 @@ void QgisApp::activateDeactivateLayerRelatedActions( QgsMapLayer *layer )
       mActionTrimExtendFeature->setEnabled( false );
 
       mActionSelectFeatures->setEnabled( isSpatial );
+      mActionSybmolEdit->setEnabled( isSpatial ); //duanshuai
       mActionSelectPolygon->setEnabled( isSpatial );
       mActionSelectFreehand->setEnabled( isSpatial );
       mActionSelectRadius->setEnabled( isSpatial );
@@ -15082,6 +15098,7 @@ void QgisApp::activateDeactivateLayerRelatedActions( QgsMapLayer *layer )
       mActionLayerSubsetString->setEnabled( false );
       mActionFeatureAction->setEnabled( false );
       mActionSelectFeatures->setEnabled( false );
+      mActionSybmolEdit->setEnabled( false ); //duanshuai
       mActionSelectPolygon->setEnabled( false );
       mActionSelectFreehand->setEnabled( false );
       mActionSelectRadius->setEnabled( false );
@@ -15193,6 +15210,7 @@ void QgisApp::activateDeactivateLayerRelatedActions( QgsMapLayer *layer )
       mActionLayerSubsetString->setEnabled( false );
       mActionFeatureAction->setEnabled( false );
       mActionSelectFeatures->setEnabled( false );
+      mActionSybmolEdit->setEnabled( false );
       mActionSelectPolygon->setEnabled( false );
       mActionSelectFreehand->setEnabled( false );
       mActionSelectRadius->setEnabled( false );
@@ -15258,6 +15276,7 @@ void QgisApp::activateDeactivateLayerRelatedActions( QgsMapLayer *layer )
       mActionLayerSubsetString->setEnabled( false );
       mActionFeatureAction->setEnabled( false );
       mActionSelectFeatures->setEnabled( false );
+      mActionSybmolEdit->setEnabled( false );
       mActionSelectPolygon->setEnabled( false );
       mActionSelectFreehand->setEnabled( false );
       mActionSelectRadius->setEnabled( false );
@@ -15323,6 +15342,7 @@ void QgisApp::activateDeactivateLayerRelatedActions( QgsMapLayer *layer )
       mActionLayerSubsetString->setEnabled( false );
       mActionFeatureAction->setEnabled( false );
       mActionSelectFeatures->setEnabled( false );
+      mActionSybmolEdit->setEnabled( false );
       mActionSelectPolygon->setEnabled( false );
       mActionSelectFreehand->setEnabled( false );
       mActionSelectRadius->setEnabled( false );

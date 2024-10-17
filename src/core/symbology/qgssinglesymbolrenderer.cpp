@@ -54,7 +54,7 @@ QgsSymbol *QgsSingleSymbolRenderer::symbolForFeature( const QgsFeature &feature,
   bool create_symbol = false;
   if (index1 >=0 ) {
     int symbol_id = feature.attribute(index1).toInt();
-    std::cerr << "symbol id:" << symbol_id << std::endl;
+    // std::cerr << "symbol id:" << symbol_id << std::endl;
     QgsIdSymbolMap id_map = QgsStyle::GetSymbolFromDb();
     if (id_map.contains(symbol_id)) {
       QgsSymbol* symbol = id_map[symbol_id];
@@ -75,6 +75,10 @@ QgsSymbol *QgsSingleSymbolRenderer::symbolForFeature( const QgsFeature &feature,
   if (!create_symbol) {
     if (index2 > 0) {
       QString symbol_xml = feature.attribute(symbox_xml_name).toString();
+      if (symbol_xml.isEmpty()) {
+        current_symbol = mSymbol.get();
+        return current_symbol;
+      }
       QDomDocument doc;
       doc.setContent(symbol_xml);
       QDomElement symbol_dom = doc.documentElement();
@@ -107,7 +111,7 @@ QgsSymbol *QgsSingleSymbolRenderer::originalSymbolForFeature( const QgsFeature &
   bool create_symbol = false;
   if (index1 >=0 ) {
     int symbol_id = feature.attribute(index1).toInt();
-    std::cerr << "symbol id:" << symbol_id << std::endl;
+    // std::cerr << "symbol id:" << symbol_id << std::endl;
     QgsIdSymbolMap id_map = QgsStyle::GetSymbolFromDb();
     if (id_map.contains(symbol_id)) {
       QgsSymbol* symbol = id_map[symbol_id];
@@ -128,6 +132,10 @@ QgsSymbol *QgsSingleSymbolRenderer::originalSymbolForFeature( const QgsFeature &
   if (!create_symbol) {
     if (index2 > 0) {
       QString symbol_xml = feature.attribute(symbox_xml_name).toString();
+      if(symbol_xml.isEmpty()) {
+        current_symbol = mSymbol.get();
+        return current_symbol;
+      }
       QDomDocument doc;
       doc.setContent(symbol_xml);
       QDomElement symbol_dom = doc.documentElement();
@@ -150,7 +158,7 @@ QgsSymbol *QgsSingleSymbolRenderer::originalSymbolForFeature( const QgsFeature &
 void QgsSingleSymbolRenderer::startRender( QgsRenderContext &context, const QgsFields &fields )
 {
   QgsFeatureRenderer::startRender( context, fields );
-  std::cerr << "QgsSingleSymbolRenderer::startRender" << std::endl;
+  //std::cerr << "QgsSingleSymbolRenderer::startRender" << std::endl;
 
   if ( !mSymbol )
     return;

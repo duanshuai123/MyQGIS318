@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1064</width>
+    <width>1378</width>
     <height>506</height>
    </rect>
   </property>
@@ -16,8 +16,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1064</width>
-     <height>24</height>
+     <width>1378</width>
+     <height>28</height>
     </rect>
    </property>
    <property name="toolTip">
@@ -580,6 +580,7 @@
    <attribute name="toolBarBreak">
     <bool>true</bool>
    </attribute>
+   <addaction name="mActionSybmolEdit"/>
    <addaction name="mActionIdentify"/>
    <addaction name="mActionOpenTable"/>
    <addaction name="mActionOpenFieldCalc"/>
@@ -3459,6 +3460,18 @@ Shows placeholders for labels which could not be placed, e.g. due to overlaps wi
    </property>
    <property name="text">
     <string>Add Point Cloud Layer...</string>
+   </property>
+  </action>
+  <action name="mActionSybmolEdit">
+   <property name="icon">
+    <iconset theme="SybmolEdit" resource="../../images/images.qrc">
+     <normaloff>:/images/themes/default/console/iconSyntaxErrorConsoleParams.svg</normaloff>:/images/themes/default/console/iconSyntaxErrorConsoleParams.svg</iconset>
+   </property>
+   <property name="text">
+    <string>sybmolEdit</string>
+   </property>
+   <property name="toolTip">
+    <string>SybmolEdit</string>
    </property>
   </action>
  </widget>

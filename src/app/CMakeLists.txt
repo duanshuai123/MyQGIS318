@@ -93,6 +93,7 @@ set(QGIS_APP_SRCS
   qgsmaptoolrotatepointsymbols.cpp
   qgsmaptoolscalefeature.cpp
   qgsmaptoolselect.cpp
+  qgsmaptoolsymboledit.cpp #duanshuai
   qgsmaptoolselectionhandler.cpp
   qgsmaptoolselectutils.cpp
   qgsmaptoolsimplify.cpp
@@ -128,6 +129,7 @@ set(QGIS_APP_SRCS
   vertextool/qgsvertextool.cpp
 
   qgslayerstylingwidget.cpp
+  qgslayerstylingwidgetV2.cpp
   qgsmeasuredialog.cpp
   qgsmeasuretool.cpp
   qgsmergeattributesdialog.cpp

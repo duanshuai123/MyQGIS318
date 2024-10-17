@@ -171,6 +171,7 @@ class QgsNetworkLoggerWidgetFactory;
 #include "qgsattributetablefiltermodel.h"
 #include "qgsmasterlayoutinterface.h"
 #include "qgsmaptoolselect.h"
+#include "qgsmaptoolsymboledit.h"
 #include "ogr/qgsvectorlayersaveasdialog.h"
 #include "ui_qgisapp.h"
 #include "qgis_app.h"
@@ -307,6 +308,9 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
 
     //! Returns the messageBar object which allows displaying unobtrusive messages to the user.
     QgsMessageBar *messageBar();
+
+    // @duanshuai
+    QList<QgsMapLayerConfigWidgetFactory *> mapLayerConfigWidgetFactories() const { return mMapLayerPanelFactories; }
 
     //! Open the message log dock widget
     void openMessageLog();
@@ -1670,6 +1674,8 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
     //! activates the rectangle selection tool
     void selectFeatures();
 
+    void symbolEdit();
+
     //! activates the polygon selection tool
     void selectByPolygon();
 
@@ -2432,6 +2438,7 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
         QgsMapToolSelect *mSelectPolygon = nullptr;
         QgsMapToolSelect *mSelectFreehand = nullptr;
         QgsMapToolSelect *mSelectRadius = nullptr;
+        QgsMapToolSelect *mSybmolEdit = nullptr ; // @duanshuai mActionSybmolEdit
         QgsMapTool *mVertexAdd = nullptr;
         QgsMapTool *mVertexMove = nullptr;
         QgsMapTool *mVertexDelete = nullptr;
