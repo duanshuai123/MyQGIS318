@@ -38,11 +38,11 @@ QgsSingleSymbolRendererWidget::QgsSingleSymbolRendererWidget( QgsVectorLayer *la
 {
   // try to recognize the previous renderer
   // (null renderer means "no previous renderer")
-
   if ( renderer )
   {
     mRenderer = QgsSingleSymbolRenderer::convertFromRenderer( renderer );
   }
+
   if ( !mRenderer )
   {
     QgsSymbol *symbol = QgsSymbol::defaultSymbol( mLayer->geometryType() );
@@ -55,6 +55,46 @@ QgsSingleSymbolRendererWidget::QgsSingleSymbolRendererWidget( QgsVectorLayer *la
   if ( mRenderer )
     mSingleSymbol = mRenderer->symbol()->clone();
 
+  // setup ui
+  mSelector = new QgsSymbolSelectorWidget( mSingleSymbol, mStyle, mLayer, nullptr );
+  connect( mSelector, &QgsSymbolSelectorWidget::symbolModified, this, &QgsSingleSymbolRendererWidget::changeSingleSymbol );
+  connect( mSelector, &QgsPanelWidget::showPanel, this, &QgsPanelWidget::openPanel );
+  connect( this, &QgsRendererWidget::symbolLevelsChanged, [ = ]()
+  {
+    delete mSingleSymbol;
+    mSingleSymbol = mRenderer->symbol()->clone();
+    mSelector->loadSymbol( mSingleSymbol );
+  } );
+
+  QVBoxLayout *layout = new QVBoxLayout( this );
+  layout->setContentsMargins( 0, 0, 0, 0 );
+  layout->addWidget( mSelector );
+
+  // advanced actions - data defined rendering
+  QMenu *advMenu = mSelector->advancedMenu();
+
+  QAction *actionLevels = advMenu->addAction( tr( "Symbol Levels…" ) );
+  connect( actionLevels, &QAction::triggered, this, &QgsSingleSymbolRendererWidget::showSymbolLevels );
+  if ( mSingleSymbol && mSingleSymbol->type() == QgsSymbol::Marker )
+  {
+    QAction *actionDdsLegend = advMenu->addAction( tr( "Data-defined Size Legend…" ) );
+    // only from Qt 5.6 there is convenience addAction() with new style connection
+    connect( actionDdsLegend, &QAction::triggered, this, &QgsSingleSymbolRendererWidget::dataDefinedSizeLegend );
+  }
+}
+
+QgsSingleSymbolRendererWidget::QgsSingleSymbolRendererWidget( QgsVectorLayer *layer, QgsStyle *style, QgsSymbol* symbol)
+  : QgsRendererWidget( layer, style )
+{
+  // try to recognize the previous renderer
+  // (null renderer means "no previous renderer")
+  if ( !mRenderer )
+  {
+    if ( symbol )
+      mRenderer = new QgsSingleSymbolRenderer( symbol->clone() );
+  }
+
+  mSingleSymbol = symbol;
   // setup ui
   mSelector = new QgsSymbolSelectorWidget( mSingleSymbol, mStyle, mLayer, nullptr );
   connect( mSelector, &QgsSymbolSelectorWidget::symbolModified, this, &QgsSingleSymbolRendererWidget::changeSingleSymbol );
@@ -116,6 +156,7 @@ void QgsSingleSymbolRendererWidget::changeSingleSymbol()
 {
   // update symbol from the GUI
   mRenderer->setSymbol( mSingleSymbol->clone() );
+  std::cerr << " change symbol ---" << std::endl;
   emit widgetChanged();
 }
 

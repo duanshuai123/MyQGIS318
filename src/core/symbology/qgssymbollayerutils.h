@@ -36,9 +36,15 @@ class QgsPathResolver;
 class QgsReadWriteContext;
 class QgsSymbolLayer;
 
+struct SymbolDbEntry
+{
+  QgsSymbol* symbol;
+  std::string hash_key;
+};
+
 typedef QMap<QString, QString> QgsStringMap;
 typedef QMap<QString, QgsSymbol * > QgsSymbolMap;
-typedef QMap<int, QgsSymbol * > QgsIdSymbolMap; // @duanshuai
+typedef QMap<int, SymbolDbEntry> QgsIdSymbolMap; // @duanshuai
 typedef QList< QPair< QColor, QString > > QgsNamedColorList SIP_SKIP;
 
 class QDomDocument;

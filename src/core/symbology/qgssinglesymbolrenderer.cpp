@@ -57,7 +57,7 @@ QgsSymbol *QgsSingleSymbolRenderer::symbolForFeature( const QgsFeature &feature,
     // std::cerr << "symbol id:" << symbol_id << std::endl;
     QgsIdSymbolMap id_map = QgsStyle::GetSymbolFromDb();
     if (id_map.contains(symbol_id)) {
-      QgsSymbol* symbol = id_map[symbol_id];
+      QgsSymbol* symbol = id_map[symbol_id].symbol;
       create_symbol = true;
       if (!mUsedSymbols.contains(symbol)) {
         mUsedSymbols.insert(symbol);
@@ -83,6 +83,11 @@ QgsSymbol *QgsSingleSymbolRenderer::symbolForFeature( const QgsFeature &feature,
       doc.setContent(symbol_xml);
       QDomElement symbol_dom = doc.documentElement();
       QgsSymbol* symbol = QgsSymbolLayerUtils::loadSymbol( symbol_dom, QgsReadWriteContext() );
+      if(symbol == nullptr) {
+        std::cerr << "fatal wrong : load symbol failed" << std::endl;
+        current_symbol = mSymbol.get();
+        return current_symbol;
+      }
       if (mFields.isEmpty()){
         symbol->startRender( context, fields );
       } else {
@@ -114,7 +119,7 @@ QgsSymbol *QgsSingleSymbolRenderer::originalSymbolForFeature( const QgsFeature &
     // std::cerr << "symbol id:" << symbol_id << std::endl;
     QgsIdSymbolMap id_map = QgsStyle::GetSymbolFromDb();
     if (id_map.contains(symbol_id)) {
-      QgsSymbol* symbol = id_map[symbol_id];
+      QgsSymbol* symbol = id_map[symbol_id].symbol;
       create_symbol = true;
       if (!mUsedSymbols.contains(symbol)) {
         mUsedSymbols.insert(symbol);

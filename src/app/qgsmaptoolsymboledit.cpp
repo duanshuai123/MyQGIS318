@@ -8,8 +8,16 @@
 #include "qgisapp.h"
 #include "qgslayerstylingwidgetV2.h"
 #include <QDialog>
+#include <QDialogButtonBox>
 #include <QVBoxLayout>
+#include <QDomDocument>
+#include <QByteArray>
+#include <QTextStream>
+#include <QMessageBox>
+#include "qgssymbollayerutils.h"
+#include "qgsreadwritecontext.h"
 #include "qgsvectorlayerdigitizingproperties.h"
+#include "qgssinglesymbolrendererwidget.h"
 QgsMapToolSymbolEdit::QgsMapToolSymbolEdit( QgsMapCanvas *canvas ) 
   : QgsMapToolSelect(canvas) {
 
@@ -28,7 +36,7 @@ void QgsMapToolSymbolEdit::canvasReleaseEvent( QgsMapMouseEvent *e ) {
     return;
   QgsFields fields = feature.fields();
 
-  QgsSymbol* current_symbol = nullptr; 
+  QgsSymbol* current_symbol = nullptr;
   static QString symbox_id_name = "symbol_id";
   static QString symbox_xml_name = "symbol_xml";
   int index1 = fields.indexFromName(symbox_id_name);
@@ -38,7 +46,7 @@ void QgsMapToolSymbolEdit::canvasReleaseEvent( QgsMapMouseEvent *e ) {
     // std::cerr << "symbol id:" << symbol_id << std::endl;
     QgsIdSymbolMap id_map = QgsStyle::GetSymbolFromDb();
     if (id_map.contains(symbol_id)) {
-      QgsSymbol* symbol = id_map[symbol_id];
+      QgsSymbol* symbol = id_map[symbol_id].symbol;
       current_symbol = symbol;
     }
   }
@@ -65,20 +73,68 @@ void QgsMapToolSymbolEdit::canvasReleaseEvent( QgsMapMouseEvent *e ) {
        current_symbol = pSingleRender->symbol();
     }
   }
-  // just edit current_symbol here
-  std::cerr << "Symbol edit release canvas: " << current_symbol << std::endl;
 
-  QList<QgsMapLayerConfigWidgetFactory*> list_factory;
-  list_factory << new QgsVectorLayerDigitizingPropertiesFactory(this) ;
+  // QList<QgsMapLayerConfigWidgetFactory*> list_factory;
+  // list_factory << new QgsVectorLayerDigitizingPropertiesFactory(this) ;
   // list_factory << new QgsPointCloudRendererWidgetFactory(this) ;
   // list_factory << new QgsPointCloudElevationPropertiesWidgetFactory(this) ;
+  // QgsLayerStylingWidgetV2* widget = new QgsLayerStylingWidgetV2(mCanvas, QgisApp::instance()->messageBar(), list_factory);
+  // widget->setLayer(pCurrentLayer);
 
-  QgsLayerStylingWidgetV2* widget = new QgsLayerStylingWidgetV2(mCanvas, QgisApp::instance()->messageBar(), list_factory);
-  widget->setLayer(pCurrentLayer);
-
+  QgsSingleSymbolRendererWidget* widget = new QgsSingleSymbolRendererWidget(pCurrentLayer, QgsStyle::defaultStyle(), current_symbol->clone());
   QDialog dialog;
   QVBoxLayout* mainLayout = new QVBoxLayout(&dialog);
   mainLayout->addWidget(widget);
-  dialog.exec();
+
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(&dialog);
+  buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
+  buttonBox->setGeometry(QRect(20, 270, 341, 32));
+  buttonBox->setOrientation(Qt::Horizontal);
+  buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+  QObject::connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+  QObject::connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+  mainLayout->addWidget(buttonBox);
+  dialog.setMinimumSize(500, 800);
+  if (dialog.exec() != QDialog::Accepted)
+    return;
+  QgsFeatureRenderer* r = widget->renderer();
+  QgsSingleSymbolRenderer* pSingleRender = dynamic_cast<QgsSingleSymbolRenderer*>(r);
+  auto newSymbol = pSingleRender->symbol();
+  std::cerr << "new symbol:" << newSymbol << std::endl;
+
+  // TODO add support for groups
+  QDomDocument doc( QStringLiteral( "dummy" ) );
+  QDomElement symEl = QgsSymbolLayerUtils::saveSymbol( "", newSymbol, doc, QgsReadWriteContext() );
+  if (symEl.isNull())
+    return ;
+
+  QByteArray xmlArray;
+  QTextStream stream( &xmlArray );
+  stream.setCodec( "UTF-8" );
+  symEl.save( stream, 4 );
+
+  std::hash<std::string> str_hash;
+  std::string data = xmlArray.constData();
+  size_t hash_key = str_hash( data );
+  std::string str_hash_key = std::to_string(hash_key);
+  QgsIdSymbolMap id_map2 = QgsStyle::GetSymbolFromDb();
+  int symbol_id = -1;
+  for(auto iter = id_map2.begin(); iter != id_map2.end(); iter++) {
+    std::cerr<< "iter key:" << iter.key() << " value:" << iter.value().hash_key << std::endl;
+    if (iter.value().hash_key == str_hash_key) {
+      std::cerr << "symbol already exists" << std::endl;
+      symbol_id = iter.key();
+      break;
+    }
+  }
+  pCurrentLayer->startEditing();
+  if (symbol_id >  -1) {
+    pCurrentLayer->changeAttributeValue(fid, index1, symbol_id);
+  } else {
+    pCurrentLayer->changeAttributeValue(fid, index1, "");
+    pCurrentLayer->changeAttributeValue(fid, index2, QString::fromStdString(data));
+  }
+  pCurrentLayer->commitChanges();
+  // QgsStyle::AddSymbolToDb(hash_key, newSymbol);
 }
 

@@ -43,7 +43,7 @@
 
 #include <sqlite3.h>
 #include "qgssqliteutils.h"
-
+#include "qgssymbollayerutils.h"
 #define STYLE_CURRENT_VERSION  "2"
 
 /**
@@ -200,8 +200,9 @@ bool QgsStyle::addSymbol( const QString &name, QgsSymbol *symbol, bool update )
 }
 
 // @duanshuai 
-QgsIdSymbolMap QgsStyle::GetSymbolFromDb() {
-  if (mIdSymbols.size() == 0 ) {
+QgsIdSymbolMap QgsStyle::GetSymbolFromDb(bool update /*= false*/) {
+  if ( update || mIdSymbols.size() == 0 ) {
+    mIdSymbols.clear();
     sqlite3_database_unique_ptr current_db;
     current_db.open(QgsApplication::userStylePath());
     QString query = qgs_sqlite3_mprintf("SELECT id,xml,hash_key FROM symbol;");
@@ -212,11 +213,15 @@ QgsIdSymbolMap QgsStyle::GetSymbolFromDb() {
     {
       const QString id = statement.columnAsText(0);
       const QString symbol_xml = statement.columnAsText(1);
+      const QString hash_key = statement.columnAsText(2);
       QDomDocument doc;
       doc.setContent(symbol_xml);
       QDomElement symbol_dom = doc.documentElement();
       QgsSymbol *symbol = QgsSymbolLayerUtils::loadSymbol( symbol_dom, QgsReadWriteContext() );
-      mIdSymbols.insert(id.toInt(), symbol);
+      SymbolDbEntry entity;
+      entity.symbol = symbol;
+      entity.hash_key = hash_key.toStdString();
+      mIdSymbols.insert(id.toInt(), entity);
     }
     QgsDebugMsg( "mIdSymbols size: " + QString::number(mIdSymbols.size()) );
   }
@@ -244,9 +249,10 @@ bool QgsStyle::saveSymbol( const QString &name, QgsSymbol *symbol, bool favorite
   std::hash<std::string> str_hash;
   std::string data = xmlArray.constData();
   size_t hash_key = str_hash( data );
-  std::cerr << hash_key << " " << std::endl;
-  QString query = qgs_sqlite3_mprintf( "INSERT INTO symbol VALUES (NULL, '%q', '%q', %d, %d);",
-                                       name.toUtf8().constData(), xmlArray.constData(), ( favorite ? 1 : 0 ) , hash_key);
+  std::string s_hash_key = std::to_string(hash_key);
+  std::cerr << s_hash_key << std::endl;
+  QString query = qgs_sqlite3_mprintf( "INSERT INTO symbol VALUES (NULL, '%q', '%q', %d, '%s');",
+                                       name.toUtf8().constData(), xmlArray.constData(), ( favorite ? 1 : 0 ) , s_hash_key);
   if ( !runEmptyQuery( query ) )
   {
     QgsDebugMsg( QStringLiteral( "Couldn't insert symbol into the database!" ) );
@@ -558,7 +564,7 @@ void QgsStyle::createTables()
                                        "name TEXT UNIQUE,"\
                                        "xml TEXT,"\
                                        "favorite INTEGER,"\
-                                       "hash_key INTEGER);"\
+                                       "hash_key TEXT);"\
                                        "CREATE TABLE colorramp("\
                                        "id INTEGER PRIMARY KEY,"\
                                        "name TEXT UNIQUE,"\

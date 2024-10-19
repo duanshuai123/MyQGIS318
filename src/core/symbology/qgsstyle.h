@@ -1066,7 +1066,7 @@ public:
     void labelSettingsChanged( const QString &name );
 
 public:
-   static QgsIdSymbolMap GetSymbolFromDb();
+   static QgsIdSymbolMap GetSymbolFromDb(bool update = false);
    static QgsIdSymbolMap mIdSymbols;
 
 private:

@@ -47,6 +47,7 @@ class QgsMessageBar;
 class QgsVectorTileBasicRendererWidget;
 class QgsVectorTileBasicLabelingWidget;
 
+//@duanshuai
 #include "qgslayerstylingwidget.h"
 class APP_EXPORT QgsLayerStylingWidgetV2 : public QWidget, private Ui::QgsLayerStylingWidgetBase
 {
